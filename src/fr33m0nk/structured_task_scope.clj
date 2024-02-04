@@ -7,7 +7,7 @@
      StructuredTaskScope$ShutdownOnFailure]))
 
 
-(defmacro forker
+(defmacro fork-task
   [structured-task-scope & body]
   `(.fork ~structured-task-scope (fn [] ~@body)))
 
