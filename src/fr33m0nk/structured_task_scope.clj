@@ -13,31 +13,41 @@
 
 
 (defmacro with-shutdown-on-success
-  {:arglists '([scope opts & body])}
-  [scope opts & body]
-  (let [{:keys [deadline-instant]} opts]
-    `(with-open [scope# (StructuredTaskScope$ShutdownOnSuccess.)]
-       (let [~scope scope#]
-         ~@body
-         (if ~deadline-instant
-           (.joinUntil scope# ~deadline-instant)
-           (.join scope#))
-         (.result scope#)))))
+  "Parameters:
+  scope: Structured task scope is created and bound to this symbol by the macro
+  opts: a map of following options
+    :deadline-instant -> expects an instance of java.time.Instant
+  "
+  {:arglists '([scope {:keys [deadline-instant]} & body])}
+  [scope {:keys [deadline-instant]} & body]
+  `(with-open [scope# (StructuredTaskScope$ShutdownOnSuccess.)]
+     (let [~scope scope#]
+       ~@body
+       (if ~deadline-instant
+         (.joinUntil scope# ~deadline-instant)
+         (.join scope#))
+       (.result scope#))))
 
 
 (defmacro with-shutdown-on-failure
-  {:arglists '([scope fork-task-bindings opts & body])}
-  [scope fork-task-bindings opts & body]
-  (let [{:keys [throw-on-failure? deadline-instant]} opts]
-    `(with-open [scope# (StructuredTaskScope$ShutdownOnFailure.)]
-       (let [~scope scope#
-             ~@fork-task-bindings]
-         (if ~deadline-instant
-           (.joinUntil scope# ~deadline-instant)
-           (.join scope#))
-         (when ~throw-on-failure?
-           (.throwIfFailed scope#))
-         ~@body))))
+  "Parameters:
+  scope: Structured task scope is created and bound to this symbol by the macro
+  fork-task-bindings: These bindings should only be of the forked task as currently the macro isn't very intelligent
+  opts: a map of following options
+    :throw-on-failure? -> expects a boolean
+    :deadline-instant -> expects an instance of java.time.Instant
+  "
+  {:arglists '([scope fork-task-bindings {:keys [throw-on-failure? deadline-instant]} & body])}
+  [scope fork-task-bindings {:keys [throw-on-failure? deadline-instant]} & body]
+  `(with-open [scope# (StructuredTaskScope$ShutdownOnFailure.)]
+     (let [~scope scope#
+           ~@fork-task-bindings]
+       (if ~deadline-instant
+         (.joinUntil scope# ~deadline-instant)
+         (.join scope#))
+       (when ~throw-on-failure?
+         (.throwIfFailed scope#))
+       ~@body)))
 
 
 (defn ->structured-scope
