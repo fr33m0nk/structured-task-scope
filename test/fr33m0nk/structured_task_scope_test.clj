@@ -57,3 +57,21 @@
                    {:deadline-instant (.plusMillis (Instant/now) 2000)}
                    (sts/fork-task scope (Thread/sleep 5000) :turtle-wins)
                    (sts/fork-task scope (Thread/sleep 5000) :hare-wins))))))
+
+(deftest ->structured-scope-test
+  (let [success (atom [])
+        error (atom [])
+        scope (sts/->structured-scope
+                #(swap! success conj %)
+                #(swap! error conj %))]
+    (testing "returns an instance of StructuredTaskScope"
+      (is (instance? StructuredTaskScope scope)))
+
+    (testing "tasks forked use the success and error handlers to handle cases"
+      (sts/fork-task scope (throw (ex-info "boom" {})))
+      (sts/fork-task scope (Thread/sleep 5000) :turtle-wins)
+      (sts/fork-task scope (Thread/sleep 5000) :hare-wins)
+      (.join scope)
+      (is (every? #{:turtle-wins :hare-wins}  @success))
+      (is (= 1 (count @error)))
+      (is (= "boom" (ex-message (first @error)))))))
