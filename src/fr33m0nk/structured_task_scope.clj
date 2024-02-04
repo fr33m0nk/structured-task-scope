@@ -43,7 +43,7 @@
 (defn ->structured-scope
   ^StructuredTaskScope
   [success-handler error-handler]
-  (proxy [StructuredTaskScope IFn] []
+  (proxy [StructuredTaskScope] []
     (handleComplete [^StructuredTaskScope$Subtask subtask]
       (condp = (.state subtask)
         StructuredTaskScope$Subtask$State/UNAVAILABLE (throw (IllegalArgumentException. "SubTask is unavailable"))
