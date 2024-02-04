@@ -30,16 +30,11 @@
        (let [~scope scope#
              ~@fork-task-bindings]
          (if ~deadline-instant
-           (do
-             (.joinUntil scope# ~deadline-instant)
-             (when ~throw-on-failure?
-               (.throwIfFailed scope#))
-             ~@body)
-           (do
-             (.join scope#)
-             (when ~throw-on-failure?
-               (.throwIfFailed scope#))
-             ~@body))))))
+           (.joinUntil scope# ~deadline-instant)
+           (.join scope#))
+         (when ~throw-on-failure?
+           (.throwIfFailed scope#))
+         ~@body))))
 
 (defn ->structured-scope
   ^StructuredTaskScope
