@@ -22,10 +22,5 @@ jobs:
         uses: DeLaGuardo/setup-clojure@12.3
         with:
           cli: latest
-#      - name: Install Clojure Deps
-#        run: |
-#          curl -O https://github.com/clojure/brew-install/releases/latest/download/linux-install.sh
-#          chmod +x linux-install.sh
-#          sudo ./linux-install.sh
       - name: run tests & build jar
         run: clojure -A:deps -T:build ci
