@@ -11,19 +11,16 @@
   `(.fork ~structured-task-scope (fn [] ~@body)))
 
 (defmacro shutdown-on-success
-  {:arglists '([scope & body] [scope deadline-instant & body])}
-  [scope x & body]
-  `(with-open [scope# (StructuredTaskScope$ShutdownOnSuccess.)]
-     (let [~scope scope#]
-       (if (instance? Instant ~x)
-         (do
-           ~@body
-           (.joinUntil scope# ~x))
-         (do
-           ~x
-           ~@body
-           (.join scope#)))
-       (.result scope#))))
+  {:arglists '([scope opts & body])}
+  [scope opts & body]
+  (let [{:keys [deadline-instant]} opts]
+    `(with-open [scope# (StructuredTaskScope$ShutdownOnSuccess.)]
+       (let [~scope scope#]
+         ~@body
+         (if ~deadline-instant
+           (.joinUntil scope# ~deadline-instant)
+           (.join scope#))
+         (.result scope#)))))
 
 (defmacro shutdown-on-failure
   {:arglists '([scope fork-task-bindings opts & body])}
