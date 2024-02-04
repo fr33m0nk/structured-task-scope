@@ -9,7 +9,7 @@
 In `deps.edn`, add following:
 ```clojure
 fr33m0nk/structured-task-scope {:git/url "https://github.com/fr33m0nk/structured-task-scope"
-                                :sha "5e9be92c912fa3509c5d4f314c652d1f534f6ebd"}
+                                :sha "f03e56ee46a306feeaaf64148ce3e256f9bb9cfd"}
 ```
 
 In REPL, require `fr33m0nk.structured-task-scope` namespace
