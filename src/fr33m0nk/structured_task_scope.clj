@@ -6,12 +6,13 @@
      StructuredTaskScope StructuredTaskScope$ShutdownOnSuccess
      StructuredTaskScope$ShutdownOnFailure]))
 
+
 (defmacro forker
   [structured-task-scope & body]
   `(.fork ~structured-task-scope (fn [] ~@body)))
 
 
-(defmacro shutdown-on-success
+(defmacro with-shutdown-on-success
   {:arglists '([scope opts & body])}
   [scope opts & body]
   (let [{:keys [deadline-instant]} opts]
@@ -24,7 +25,7 @@
          (.result scope#)))))
 
 
-(defmacro shutdown-on-failure
+(defmacro with-shutdown-on-failure
   {:arglists '([scope fork-task-bindings opts & body])}
   [scope fork-task-bindings opts & body]
   (let [{:keys [throw-on-failure? deadline-instant]} opts]
