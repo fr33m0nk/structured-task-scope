@@ -10,6 +10,7 @@
   [structured-task-scope & body]
   `(.fork ~structured-task-scope (fn [] ~@body)))
 
+
 (defmacro shutdown-on-success
   {:arglists '([scope opts & body])}
   [scope opts & body]
@@ -21,6 +22,7 @@
            (.joinUntil scope# ~deadline-instant)
            (.join scope#))
          (.result scope#)))))
+
 
 (defmacro shutdown-on-failure
   {:arglists '([scope fork-task-bindings opts & body])}
@@ -35,6 +37,7 @@
          (when ~throw-on-failure?
            (.throwIfFailed scope#))
          ~@body))))
+
 
 (defn ->structured-scope
   ^StructuredTaskScope
