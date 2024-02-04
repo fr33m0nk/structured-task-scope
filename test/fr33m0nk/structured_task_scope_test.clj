@@ -2,9 +2,9 @@
   (:require [clojure.test :refer :all]
             [fr33m0nk.structured-task-scope :as sts])
   (:import [java.time Instant]
-           [java.util.concurrent TimeoutException]))
+           [java.util.concurrent StructuredTaskScope TimeoutException]))
 
-(deftest shutdown-on-failure-test
+(deftest with-shutdown-on-failure-test
   (testing "returns exception if :throw-on-failure? is set in options"
     (is (instance? Exception (sts/with-shutdown-on-failure
                                scope
@@ -39,7 +39,7 @@
               :deadline-instant (.plusMillis (Instant/now) 7000)}
              (map #(name (.get %)) [turtle hare]))))))
 
-(deftest shutdown-on-success-test
+(deftest with-shutdown-on-success-test
   (testing "shuts down the scope and returns the result when any of the forked tasks finish successfully.
   By its design StructuredTaskScope$ShutdownOnSuccess ignores any exception in forked tasks"
     (is (= :mouse-wins
