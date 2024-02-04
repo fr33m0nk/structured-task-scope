@@ -1,10 +1,12 @@
 # fr33m0nk/structured-task-scope
 
-- This is an experimentation with JDK-21 preview feature `Structured-Task-Scope`
-- The purpose is to arrive upon most usable abstraction in Clojure
+- This is an experimentation `Structued concurrency` with JDK-21 preview feature `Structured Task Scope`
+- The purpose is to arrive upon most usable abstraction for `Structured Task Scope` in Clojure
 - May be released as a library if the usability is established.
 
 ## Usage
+
+### JDK-21+ is mandatory to be able to use this wrapper/library
 
 In `deps.edn`, add following:
 ```clojure
