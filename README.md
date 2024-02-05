@@ -122,12 +122,17 @@ result
   ;; These bindings should only be of the forked task as
   ;; currently the macro isn't very intelligent
   [turtle (sts/fork-task scope (Thread/sleep 5000) :turtle-wins)
-   hare (sts/fork-task scope (Thread/sleep 5000) :hare-wins)]
+   hare (sts/fork-task scope (Thread/sleep 5000) :hare-wins)
+   ;; forked task bindings can be used inside another forked task
+   ;; using bindings `boomer (.get hare)` here will cause `IllegalStateException`
+   ;; However, such bindings are fine in body of the macroas the body executes after `(.join scope)` 
+   zoomba (sts/fork-task scope (->> [turtle hare]
+                                (map #(name (.get %)))))]
   ;; Extra options
   {:throw-on-failure? true
    :deadline-instant (.plusMillis (Instant/now) 7000)}
   ;; do something with bindings after calling `.get` method on subtasks
-  (map #(name (.get %)) [turtle hare]))
+  (.get zoomba))
 ```
 result
 ```clojure
