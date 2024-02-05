@@ -125,7 +125,7 @@ result
    hare (sts/fork-task scope (Thread/sleep 5000) :hare-wins)
    ;; forked task bindings can be used inside another forked task
    ;; using bindings `boomer (.get hare)` here will cause `IllegalStateException`
-   ;; However, such bindings are fine in body of the macroas the body executes after `(.join scope)` 
+   ;; However, such bindings are fine in body of the macro as the body executes after `(.join scope)` 
    zoomba (sts/fork-task scope (->> [turtle hare]
                                 (map #(name (.get %)))))]
   ;; Extra options
