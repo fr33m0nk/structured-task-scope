@@ -11,7 +11,7 @@
 In `deps.edn`, add following:
 ```clojure
 fr33m0nk/structured-task-scope {:git/url "https://github.com/fr33m0nk/structured-task-scope"
-                                :sha "71058b3ab587c91fd6bce4e82079531b48c3ad29"}
+                                :sha "0af6062d15228f13a0ba0aa22e696da195dd81aa"}
 ```
 ## ScopedValues
 - ScopedValues are introduced to create differing local bindings for Threads (Virtual or Platform)
