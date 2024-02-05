@@ -40,8 +40,7 @@
              (map #(name (.get %)) [turtle hare]))))))
 
 (deftest with-shutdown-on-success-test
-  (testing "shuts down the scope and returns the result when any of the forked tasks finish successfully.
-  By its design StructuredTaskScope$ShutdownOnSuccess ignores any exception in forked tasks"
+  (testing "shuts down the scope and returns the result when any of the forked tasks finish successfully."
     (is (= :mouse-wins
            (sts/with-shutdown-on-success
              scope
