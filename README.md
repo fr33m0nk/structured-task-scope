@@ -13,6 +13,52 @@ In `deps.edn`, add following:
 fr33m0nk/structured-task-scope {:git/url "https://github.com/fr33m0nk/structured-task-scope"
                                 :sha "f03e56ee46a306feeaaf64148ce3e256f9bb9cfd"}
 ```
+## ScopedValues
+- ScopedValues are introduced to create differing local bindings for Threads (Virtual or Platform)
+- They differ from ThreadLocals as the extent of binding is limited to function invocation and the binding is immutable
+- This is also a good alternate to `^:dynamic` Clojure vars
+- [JEP Café #16: Java 20 - From ThreadLocal to ScopedValue with Loom](https://www.youtube.com/watch?v=fjvGzBFmyhM) is a brilliant reference
+
+In REPL, require `fr33m0nk.scoped-value` 
+```clojure
+(require '[fr33m0nk.scoped-value :as sv])
+
+(def a-scoped-value (sv/->scoped-value))
+```
+### Using `a-scoped-value` for side effect
+```clojure
+(defn function-using-scope-value
+  []
+  (let [processed-string (str (sv/deref a-scoped-value) " Ok")]
+    (println processed-string)))
+
+(->> (range 3)
+     (pmap #(future
+             (sv/run-where! a-scoped-value (str "Hello - " %) function-using-scope-value)))
+     (run! deref))
+```
+result
+```clojure
+;;Obvious jumbling due to multithreading while printing to screen
+Hello - 2 OkHello - 0 OkHello - 1 Ok 
+```
+### Using `a-scoped-value` for functional transformation
+```clojure
+(defn function-using-scope-value
+  []
+  (str (sv/deref a-scoped-value) " Ok"))
+
+(->> (range 3)
+     (pmap #(future
+              (sv/apply-where a-scoped-value (str "Hello - " %) function-using-scope-value)))
+     (mapv deref))
+```
+result
+```clojure
+["Hello - 0 Ok" "Hello - 1 Ok" "Hello - 2 Ok"]
+```
+
+## StructuredTaskScope
 
 In REPL, require `fr33m0nk.structured-task-scope` namespace
 ```clojure
