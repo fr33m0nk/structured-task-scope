@@ -34,10 +34,12 @@
            (sts/with-shutdown-on-failure
              scope
              [turtle (sts/fork-task scope (Thread/sleep 5000) :turtle-wins)
-              hare (sts/fork-task scope (Thread/sleep 5000) :hare-wins)]
+              hare (sts/fork-task scope (Thread/sleep 5000) :hare-wins)
+              zoomba (sts/fork-task scope (->> [turtle hare]
+                                           (map #(name (.get %)))))]
              {:throw-on-failure? true
               :deadline-instant (.plusMillis (Instant/now) 7000)}
-             (map #(name (.get %)) [turtle hare]))))))
+             (.get zoomba))))))
 
 (deftest with-shutdown-on-success-test
   (testing "shuts down the scope and returns the result when any of the forked tasks finish successfully."
