@@ -17,7 +17,7 @@ fr33m0nk/structured-task-scope {:git/url "https://github.com/fr33m0nk/structured
 - ScopedValues are introduced to create differing local bindings for Threads (Virtual or Platform)
 - They differ from ThreadLocals as the extent of binding is limited to function invocation and the binding is immutable
 - This is also a good alternate to `^:dynamic` Clojure vars
-- [JEP Café #16: Java 20 - From ThreadLocal to ScopedValue with Loom](https://www.youtube.com/watch?v=fjvGzBFmyhM) is a brilliant reference
+- [JEP Café #16: Java 20 - From ThreadLocal to ScopedValue](https://www.youtube.com/watch?v=fjvGzBFmyhM) is a brilliant reference
 
 In REPL, require `fr33m0nk.scoped-value` 
 ```clojure
