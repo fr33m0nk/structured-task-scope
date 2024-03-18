@@ -41,7 +41,10 @@
   {:arglists '([name & body])}
   [name & body]
   `(let [p# (promise)
-         f# (fn [] (deliver p# ~@body))
+         f# (fn [] (deliver p# (try
+                                 ~@body
+                                 (catch Throwable t#
+                                   t#))))
          thread# (->virtual-thread f# ~name)]
      (start thread#)
      p#))
