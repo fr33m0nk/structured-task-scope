@@ -76,3 +76,10 @@
       (is (every? #{:turtle-wins :hare-wins}  @success))
       (is (= 1 (count @error)))
       (is (= "boom" (ex-message (first @error)))))))
+
+(deftest let-fork-test
+  (testing "evaluates let bindings in concurrently by forking subtasks on independent virtual threads"
+    (is (= {:a 10}
+           (sts/let-fork [a (let [sleep-ms 5000] (Thread/sleep sleep-ms) :a)
+                          b (let [sleep-ms 2000] (Thread/sleep sleep-ms) 10)]
+                         {a b})))))

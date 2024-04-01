@@ -59,3 +59,34 @@
         StructuredTaskScope$Subtask$State/UNAVAILABLE (throw (IllegalArgumentException. "SubTask is unavailable"))
         StructuredTaskScope$Subtask$State/FAILED (error-handler (.exception subtask))
         StructuredTaskScope$Subtask$State/SUCCESS (success-handler (.get subtask))))))
+
+(defn- should-be [p msg form]
+  (when-not p
+    (let [line (:line (meta form))
+          msg (format "%s requires %s in %s:%s" (first form) msg *ns* line)]
+      (throw (IllegalArgumentException. msg)))))
+
+(defn- let-fork-subtask-macro-helper
+  [^StructuredTaskScope scope & body]
+  `(.fork ^StructuredTaskScope ~scope (fn [] ~@body)))
+
+(defn- let-fork-value-from-subtask-macro-helper
+  [^StructuredTaskScope$Subtask subtask]
+  `(.get ^StructuredTaskScope$Subtask ~subtask))
+(defmacro let-fork
+  "Evaluates bindings in parallel and returns the result of
+  evaluating body in the context of those bindings. Bindings
+  have to be independent of each other."
+  [bindings & body]
+  (should-be (vector? bindings) "a vector for its bindings" &form)
+  (should-be (even? (count bindings)) "an even number of forms in bindings" &form)
+  (let [binding-syms (take-nth 2 bindings)
+        expressions (take-nth 2 (rest bindings))
+        binding-gensyms (take (count binding-syms) (repeatedly gensym))
+        task-scope (gensym)]
+    `(with-open [~task-scope (StructuredTaskScope$ShutdownOnFailure.)]
+       (let ~(vec (interleave binding-gensyms (map #(let-fork-subtask-macro-helper task-scope %) expressions)))
+         (.join ~task-scope)
+         (.throwIfFailed ~task-scope)
+         (let ~(vec (interleave binding-syms (map #(let-fork-value-from-subtask-macro-helper %) binding-gensyms)))
+           ~@body)))))
