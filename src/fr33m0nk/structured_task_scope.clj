@@ -73,6 +73,7 @@
 (defn- let-fork-value-from-subtask-macro-helper
   [^StructuredTaskScope$Subtask subtask]
   `(.get ^StructuredTaskScope$Subtask ~subtask))
+
 (defmacro let-fork
   "Evaluates bindings in parallel and returns the result of
   evaluating body in the context of those bindings. Bindings
