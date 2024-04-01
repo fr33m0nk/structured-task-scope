@@ -139,6 +139,25 @@ result
 ("turtle-wins" "hare-wins")
 ```
 
+### Additional functions/macros
+`let-fork`
+Evaluates bindings in parallel and returns the result of
+evaluating body in the context of those bindings. 
+Bindings have to be independent of each other
+```clojure
+(sts/let-fork [a (let [sleep-ms 5000] (println "Sleep 1 ") (Thread/sleep sleep-ms) (println "Awake 1") :a)
+               b (let [sleep-ms 2000] (println "Sleep 2 ") (Thread/sleep sleep-ms) (println "Awake 2") 10)]
+              {a b})
+```
+result
+```clojure
+Sleep 1
+Sleep 2
+Awake 2
+Awake 1
+
+{:a 10}
+```
 ## License
 
 Copyright © 2024 Prashant Sinha
